@@ -23,6 +23,11 @@ class PokemonEntity(models.Model):
     longitude = models.FloatField()
     appeared_at = models.DateTimeField(default=timezone.now)
     disappeared_at = models.DateTimeField(default=timezone.now)
+    level = models.IntegerField(default=1)
+    health = models.IntegerField(default=100)
+    attack = models.IntegerField(default=50)
+    defense = models.IntegerField(default=50)
+    stamina = models.IntegerField(default=50)
 
     def __str__(self):
-        return f'{self.pokemon.title} appeared at {self.appeared_at} and disappeared at {self.disappeared_at}'
+        return f"{self.pokemon.title} (Level {self.level}) at {self.latitude}, {self.longitude}"
