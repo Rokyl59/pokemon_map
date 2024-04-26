@@ -1,4 +1,5 @@
 from django.db import models  # noqa F401
+from django.utils import timezone
 
 
 class Pokemon(models.Model):
@@ -20,6 +21,8 @@ class PokemonEntity(models.Model):
     )
     latitude = models.FloatField()
     longitude = models.FloatField()
+    appeared_at = models.DateTimeField(default=timezone.now)
+    disappeared_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f'{self.pokemon.title} at {self.latitude}, {self.longitude}'
+        return f'{self.pokemon.title} appeared at {self.appeared_at} and disappeared at {self.disappeared_at}'
