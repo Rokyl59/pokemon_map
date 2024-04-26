@@ -3,7 +3,11 @@ from django.utils import timezone
 
 
 class Pokemon(models.Model):
-    title = models.CharField(max_length=200, verbose_name="Название")
+    title = models.CharField(
+        max_length=200,
+        verbose_name="Название",
+        blank=True,
+    )
     title_en = models.CharField(
         max_length=200,
         blank=True,
@@ -21,7 +25,6 @@ class Pokemon(models.Model):
         verbose_name="Изображение"
     )
     description = models.TextField(
-        null=True,
         blank=True,
         verbose_name="Описание"
     )
@@ -44,15 +47,49 @@ class PokemonEntity(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Покемон",
     )
-    latitude = models.FloatField(verbose_name="Широта")
-    longitude = models.FloatField(verbose_name="Долгота")
-    appeared_at = models.DateTimeField(default=timezone.now, verbose_name="Время появления")
-    disappeared_at = models.DateTimeField(default=timezone.now, verbose_name="Время исчезновения")
-    level = models.IntegerField(default=1, verbose_name="Уровень")
-    health = models.IntegerField(default=100, verbose_name="Здоровье")
-    attack = models.IntegerField(default=50, verbose_name="Атака")
-    defense = models.IntegerField(default=50, verbose_name="Защита")
-    stamina = models.IntegerField(default=50, verbose_name="Выносливость")
+    latitude = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name="Широта"
+    )
+    longitude = models.FloatField(
+        null=True,
+        blank=True,
+        verbose_name="Долгота"
+    )
+    appeared_at = models.DateTimeField(
+        default=timezone.now,
+        verbose_name="Время появления"
+    )
+    disappeared_at = models.DateTimeField(
+        default=timezone.now,
+        verbose_name="Время исчезновения"
+    )
+    level = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Уровень"
+    )
+    health = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Здоровье"
+    )
+    attack = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Атака"
+    )
+    defense = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Защита"
+    )
+    stamina = models.IntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Выносливость"
+    )
 
     def __str__(self):
-        return f"{self.pokemon.title} (Level {self.level}) at {self.latitude}, {self.longitude}"
+        return f"{self.pokemon.title if self.pokemon.title else 'Неизвестный покемон'} at {self.latitude}, {self.longitude}"
