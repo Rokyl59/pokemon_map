@@ -83,17 +83,21 @@ def show_pokemon(request, pokemon_id):
         'description': pokemon.description,
         'title_en': pokemon.title_en,
         'title_jp': pokemon.title_jp,
-        'previous_evolution': {
-            'title_ru': pokemon.previous_evolution.title if pokemon.previous_evolution else "",
-            'pokemon_id': pokemon.previous_evolution.id if pokemon.previous_evolution else None,
-            'img_url': get_image_url(request, pokemon.previous_evolution.image) if pokemon.previous_evolution else DEFAULT_IMAGE_URL,
-        } if pokemon.previous_evolution else {},
-        'next_evolution': {
-            'title_ru': pokemon.next_evolutions.first().title if pokemon.next_evolutions.exists() else "",
-            'pokemon_id': pokemon.next_evolutions.first().id if pokemon.next_evolutions.exists() else None,
-            'img_url': get_image_url(request, pokemon.next_evolutions.first().image) if pokemon.next_evolutions.exists() else DEFAULT_IMAGE_URL,
-        } if pokemon.next_evolutions.exists() else {}
     }
+
+    if pokemon.previous_evolution:
+        pokemon_data['previous_evolution'] = {
+            'title_ru': pokemon.previous_evolution.title,
+            'pokemon_id': pokemon.previous_evolution.id,
+            'img_url': get_image_url(request, pokemon.previous_evolution.image),
+        }
+
+    if next_evolution := pokemon.next_evolutions.first():
+        pokemon_data['next_evolution'] = {
+            'title_ru': next_evolution.title,
+            'pokemon_id': next_evolution.id,
+            'img_url': get_image_url(request, next_evolution.image),
+        }
 
     return render(request, 'pokemon.html', context={
         'map': folium_map._repr_html_(), 'pokemon': pokemon_data
