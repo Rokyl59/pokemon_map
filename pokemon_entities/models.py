@@ -6,7 +6,6 @@ class Pokemon(models.Model):
     title = models.CharField(
         max_length=200,
         verbose_name="Название",
-        blank=True,
     )
     title_en = models.CharField(
         max_length=200,
@@ -20,8 +19,6 @@ class Pokemon(models.Model):
     )
     image = models.ImageField(
         upload_to='pokemons_image',
-        blank=True,
-        null=True,
         verbose_name="Изображение"
     )
     description = models.TextField(
@@ -48,13 +45,9 @@ class PokemonEntity(models.Model):
         verbose_name="Покемон",
     )
     latitude = models.FloatField(
-        null=True,
-        blank=True,
         verbose_name="Широта"
     )
     longitude = models.FloatField(
-        null=True,
-        blank=True,
         verbose_name="Долгота"
     )
     appeared_at = models.DateTimeField(
