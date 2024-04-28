@@ -37,7 +37,7 @@ def show_all_pokemons(request):
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
     for pokemon_entity in active_pokemons_entities:
-        image_url = pokemon_entity.pokemon.image.url if pokemon_entity.pokemon.image else DEFAULT_IMAGE_URL
+        image_url = get_image_url(request, pokemon_entity.pokemon.image)
         add_pokemon(
             folium_map, pokemon_entity.latitude,
             pokemon_entity.longitude,
@@ -78,26 +78,30 @@ def show_pokemon(request, pokemon_id):
         )
     
     pokemon_data = {
-        'img_url': request.build_absolute_uri(pokemon.image.url) if pokemon.image else DEFAULT_IMAGE_URL,
+        'img_url': get_image_url(request, pokemon.image),
         'title_ru': pokemon.title,
         'description': pokemon.description,
         'title_en': pokemon.title_en,
         'title_jp': pokemon.title_jp,
+        'previous_evolution': {
+            'title_ru': pokemon.previous_evolution.title if pokemon.previous_evolution else "",
+            'pokemon_id': pokemon.previous_evolution.id if pokemon.previous_evolution else None,
+            'img_url': get_image_url(request, pokemon.previous_evolution.image) if pokemon.previous_evolution else DEFAULT_IMAGE_URL,
+        } if pokemon.previous_evolution else {},
+        'next_evolution': {
+            'title_ru': pokemon.next_evolutions.first().title if pokemon.next_evolutions.exists() else "",
+            'pokemon_id': pokemon.next_evolutions.first().id if pokemon.next_evolutions.exists() else None,
+            'img_url': get_image_url(request, pokemon.next_evolutions.first().image) if pokemon.next_evolutions.exists() else DEFAULT_IMAGE_URL,
+        } if pokemon.next_evolutions.exists() else {}
     }
-
-    pokemon_data['previous_evolution'] = {
-        'title_ru': pokemon.previous_evolution.title if pokemon.previous_evolution else "",
-        'pokemon_id': pokemon.previous_evolution.id if pokemon.previous_evolution else None,
-        'img_url': request.build_absolute_uri(pokemon.previous_evolution.image.url) if pokemon.previous_evolution and pokemon.previous_evolution.image else DEFAULT_IMAGE_URL,
-    } if pokemon.previous_evolution else {}
-
-    next_evolution = pokemon.next_evolutions.first()
-    pokemon_data['next_evolution'] = {
-        'title_ru': next_evolution.title if next_evolution else "",
-        'pokemon_id': next_evolution.id if next_evolution else None,
-        'img_url': request.build_absolute_uri(next_evolution.image.url) if next_evolution and next_evolution.image else DEFAULT_IMAGE_URL,
-    } if next_evolution else {}
 
     return render(request, 'pokemon.html', context={
         'map': folium_map._repr_html_(), 'pokemon': pokemon_data
     })
+
+
+def get_image_url(request, image_field):
+    if image_field:
+        return request.build_absolute_uri(image_field.url)
+    else:
+        return DEFAULT_IMAGE_URL
